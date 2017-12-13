@@ -30,7 +30,7 @@ else
 end
 outliers = sum(outlier);
 if outliers
-    display(sprintf('warning, %d measurements were labeled as outliers, t=%d',sum(outlier), t));
+    display(spr intf('warning, %d measurements were labeled as outliers, t=%d',sum(outlier), t));
 end
 S_bar = weight(S_bar,Psi,outlier);
 
