@@ -2,6 +2,7 @@
 
 robot = init_robot(0.5, 8, 2);
 
+%%test simple robot plotting
 figure
 axis([0 5 0 5]);
 axis equal
