@@ -1,4 +1,4 @@
-% function [outlier,Psi] = associate(S_bar,z,W,Lambda_psi,Q)
+    % function [outlier,Psi] = associate(S_bar,z,W,Lambda_psi,Q)
 %           S_bar(t)            4XM
 %           z(t)                2Xn
 %           W                   2XN
