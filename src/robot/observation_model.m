@@ -17,7 +17,7 @@ for i=1:size(map.walls,1)
     if map.walls(i,1) ~= map.walls(i,3)
         line = [map.walls(i,1) 1; map.walls(i,3) 1]\[map.walls(i,2); map.walls(i,4)];
         for j=1:sensor_num
-            d(:,j,i)=(line(2)-particles(:,2)+line(1)*particles(:,1))./(normed_sensors(j,1)*sin(particles(:,3))+normed_sensors(j,2)*cos(particles(:,3))-line(1)*normed_sensors(j,1)*cos(particles(:,3))-line(1)*normed_sensors(j,2)*sin(particles(:,3)));
+            d(:,j,i)=(line(2)-particles(:,2)+line(1)*particles(:,1))./(normed_sensors(j,1)*sin(particles(:,3))+normed_sensors(j,2)*cos(particles(:,3))-line(1)*normed_sensors(j,1)*cos(particles(:,3))+line(1)*normed_sensors(j,2)*sin(particles(:,3)));
         end
         d( or(d(:,:,:)<0, d(:,:,:)>robot.max_range) ) = robot.max_range; % this is not optimal yet as it checks stuff again every loop
     else
@@ -27,7 +27,6 @@ for i=1:size(map.walls,1)
         d( or(d(:,:,:)<0, d(:,:,:)>robot.max_range) ) = robot.max_range; % this is not optimal yet as it checks stuff again every loop
     end
 end
-
 
 for i=1:sensor_num
     to_check = min(d(:,i,:), [], 3) < robot.max_range;
