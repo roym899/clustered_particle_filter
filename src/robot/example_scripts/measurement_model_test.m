@@ -9,13 +9,13 @@ plot_map(map);
 
 %% generate eight sensor robot to test
 
-robot = init_robot(0.5, 16, 2);
+robot = init_robot(0.5, 8, 2);
 
-particle = [2, 2, 1];
+particle = repmat([2, 2, 1], 10000, 1)+randn(10000, 3);
 
 tic
 measurement = observation_model(robot, map, particle);
 toc
 
 plot_map(map);
-plot_robot(robot, particle, measurement, true);
+plot_robot(robot, particle(100,:), measurement(100,:), true);
