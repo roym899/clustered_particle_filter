@@ -1,7 +1,7 @@
-function [ robot ] = init_robot( sampling_frequency, sensor_num, max_range)
+function [ robot ] = init_robot( sampling_interval, sensor_num, max_range)
 %INIT_ROBOT Initializes the robot and its sensors
 
-robot.sampling_frequency = sampling_frequency;
+robot.sampling_interval = sampling_interval;
 robot.max_range = max_range;
 
 robot.sensors = [];
