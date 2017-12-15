@@ -24,7 +24,7 @@ while 1
                 flag = 2;
             end
         case 2 
-            S = mclcluster(C,S,R,Q,z,u,t,map,robot);
+            S = mcl_cluster(C,S,R,Q,z,u,t,map,robot);
         case 3  
             S = restart(C,S,R,Q,z,u,t,map,robot);
             flag = 2;
