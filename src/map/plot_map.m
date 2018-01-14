@@ -6,8 +6,9 @@ function [ ] = plot_map( map, varargin )
 walls = size(map.walls, 1);
 
 % make the plot nice
-axis(map.limits);
 axis('equal');
+axis('manual');
+axis(map.limits);
 
 % plot all the walls, one by one
 hold on
