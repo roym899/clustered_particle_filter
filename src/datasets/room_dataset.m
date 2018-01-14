@@ -9,14 +9,14 @@ plot_map(map);
 
 %% define constants
 sensors = 8;
-control_noise = diag([0.05; 0.5]);
-sensor_variance = 0.1;
+control_variance = diag([0.1; 0.05]);
+sensor_variance = 0.2;
 
 %% set seed for reproducible results
 rng(1);
 
 %% generate eight sensor robot to test
-robot = init_robot(0.1, sensors, 2);
+robot = init_robot(0.1, sensors, 2, sensor_variance, control_variance);
 
 state = [2, 2, 0];
 
@@ -32,10 +32,11 @@ room_data.robot = robot;
 for i=1:size(control,1)
     tic;
     clf(canvas);
-    measurement = add_observation_noise(robot, observation_model(robot, map, state), sensor_variance);
+    measurement = add_observation_noise(robot, observation_model(robot, map, state));
     plot_map(map);
     plot_robot(robot, state, measurement, true);
-    state = motion_model(robot, state, control(i,:), control_noise);
+    state = motion_model(robot, state, control(i,:));
+    room_data.actual_state(i,:) = state;
     room_data.measurements(i,:) = measurement;
     t = toc;
     pause(0.001)
