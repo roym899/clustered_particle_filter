@@ -4,8 +4,6 @@ map = add_wall(map, [1 1 4 1]);
 map = add_wall(map, [4 1 4 3]);
 map = add_wall(map, [4 3 1 3]);
 map = add_wall(map, [1 3 1 1]);
-map = add_wall(map, [2 2 2.4 4]);
-map = add_wall(map, [1 2 1.5 7]);
 
 plot_map(map);
 

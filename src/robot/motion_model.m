@@ -6,12 +6,14 @@ function [ updated_particles ] = motion_model( robot, particles, control, noise 
 %   noise       covariance of gaussian noise to be added to each particle
 
 control = control + 1e-12;
+control = repmat(control, size(particles,1), 1);
+control = control + mvnrnd([0 0], noise, size(particles, 1));
 updated_particles = particles;
-updated_particles(:,1) = updated_particles(:,1) - control(1)/control(2).*sin(particles(:,3)) + control(1)/control(2)*sin(particles(:,3) + control(2)*robot.sampling_interval);
-updated_particles(:,2) = updated_particles(:,2) + control(1)/control(2).*cos(particles(:,3)) - control(1)/control(2)*cos(particles(:,3) + control(2)*robot.sampling_interval);
-updated_particles(:,3) = updated_particles(:,3) + control(2)*robot.sampling_interval;
+updated_particles(:,1) = updated_particles(:,1) - control(:,1)/control(:,2).*sin(particles(:,3)) + control(:,1)/control(:,2)*sin(particles(:,3) + control(:,2)*robot.sampling_interval);
+updated_particles(:,2) = updated_particles(:,2) + control(:,1)/control(2).*cos(particles(:,3)) - control(:,1)/control(:,2)*cos(particles(:,3) + control(:,2)*robot.sampling_interval);
+updated_particles(:,3) = updated_particles(:,3) + control(:,2)*robot.sampling_interval;
 
-updated_particles = updated_particles(:,:) + mvnrnd([0 0 0], noise, size(updated_particles, 1));
+updated_particles = updated_particles(:,:);
 
 end
 
