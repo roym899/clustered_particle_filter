@@ -27,33 +27,39 @@ for p = 1:size(S,1)
     exclude_me = ones(1,size(S,1));
     exclude_me(p) = 0;
     indx = find(not(points)'&((d_euclidean(p,:)<maxEuclidian)&(exclude_me)&(ang'<maxTheta)'));
-    N = S(indx,:);
     i = 1;
-    M = size(N,1);
+    M = size(index,1);
     if(M<minNeighbours) 
         continue;
     end
     Cl = Cl +1;
+    indx_duplicate = indx;
     points(p) = Cl;
     while(i<M+1)
+        
         if(points(indx(i)))
             i=i+1;
             continue;
         end
         points(indx(i)) = Cl;
         ang = d_angle(indx(i),:);
-        neigh = points(((d_euclidean(i,:)<maxEuclidian)&(ang<maxTheta)))==0;
-        if(size(neigh)>minNeighbours)
-            N = [N;S(neigh,:)];
-            indx = [indx find(neigh)];
-            M = size(N,1);
+        exclude_me = ones(1,size(S,1));
+        exclude_me(indx(i)) = 0;
+        neigh = (d_euclidean(indx(i),:)<maxEuclidian)&exclude_me;
+        if(size(find(neigh))>=minNeighbours)
+            newIndx = find(neigh);
+            indx_duplicate = [indx_duplicate setdiff(newIndx,indx_duplicate)];
+            indx = [indx newIndx ];
+            
+            M = size(indx,2);
         end
         i = i+1;
     end
-    
-    C{end+1} = [N;S(p,:)];
-    N = [];
+    size(indx)
+    C{end+1} = S(indx_duplicate,:);
 end
+
+
 for n = 1:size(points)
     if(not(points(n)))
         C{end+1} = S(n,:);
