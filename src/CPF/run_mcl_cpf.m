@@ -12,7 +12,7 @@
 
 
 
-function run_mcl_cpf(map, robot, data, mode, initial_particle_set, control_variance, measurement_variance)
+function run_mcl_cpf(map, robot, data, mode, initial_particle_set, control_variance, measurement_variance, clustering_options)
 t = 0;
 
 z = data.measurements;
@@ -33,34 +33,48 @@ drawnow
 flag = 1;
 while 1 
     t = t+1;
-    switch flag
-        case 1
-            if((t*mode)<10)
-                S = mcl(S,R,Q,z(t,:),u(t,:),map,robot);
-            else
-                C = cluster(S);
-                flag = 2;
+    switch mode
+        case 'mcl'
+            S = mcl(S,R,Q,z(t,:),u(t,:),map,robot);
+        case 'mcl_cpf'
+            if t==1
+                C{1} = initial_particle_set;
             end
-        case 2 
-            S = mcl_cluster(C,S,R,Q,z,u,t,map,robot);
-        case 3  
-            S = restart(C,S,R,Q,z,u,t,map,robot);
-            flag = 2;
+            C = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot);
+            if t==clustering_options.first_timestep
+                S = [];
+                for i=1:length(C)
+                    S = [S; C{i}];
+                end
+                C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
+            end
+        case 'mcl_cpf_extra'
     end
     
     
-    clf(canvas);
-    plot_map(map);
-    hold on
-    plot(S(:,1), S(:,2), '.','MarkerSize',3,'Color','blue');
-    hold off
-    plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
-    drawnow
-    
-    if t>=size(z,1) 
-        break;
+    switch mode
+        case 'mcl'
+            clf(canvas);
+            plot_map(map);
+            hold on
+            plot(S(:,1), S(:,2), '.','MarkerSize',3,'Color','blue');
+            hold off
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            drawnow
+        case 'mcl_cpf'
+            clf(canvas);
+            plot_map(map);
+            hold on
+            plot_clusters(C);
+            hold off
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            drawnow
+        case 'mcl_cpf_extra'
     end
-        
+      
+if t>=size(z,1) 
+    break;
+end
 end
 
 

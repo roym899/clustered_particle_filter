@@ -11,15 +11,15 @@
 %           robot               struct
 % Outputs:
 %           S(t)                MX3
-function S = mcl_cluster(C, R, Q, z, u, map, robot)
+function C = mcl_cluster(C, R, Q, z, u, map, robot)
     % loop over the clusters and apply normal mcl inside each cluster
     for i=1:length(C)
         S = C{i};
         S_bar = motion_model(robot, S, u, R);
         W = weight(S_bar,Q,z,map,robot);
-        S = multinomial_resample(S_bar, W);
+        C{i} = multinomial_resample(S_bar, W);
         % quality measure of the clusters
         
-        % adapt 
+        % adapt l
     end
 end
