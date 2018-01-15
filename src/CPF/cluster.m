@@ -28,7 +28,7 @@ for p = 1:size(S,1)
     exclude_me(p) = 0;
     indx = find(not(points)'&((d_euclidean(p,:)<maxEuclidian)&(exclude_me)&(ang'<maxTheta)'));
     i = 1;
-    M = size(indx,1);
+    M = size(indx,2);
     if(M<minNeighbours) 
         continue;
     end
@@ -46,8 +46,8 @@ for p = 1:size(S,1)
         exclude_me(indx(i)) = 0;
         log_idx = zeros(size(S,1),1);
         log_idx(indx) = 1;
-        neigh = (d_euclidean(indx(i),:)<maxEuclidian)&exclude_me&~log_idx';
-        if(size(find(neigh))>=minNeighbours)
+        neigh = (d_euclidean(indx(i),:)<maxEuclidian)&(ang<maxTheta)&exclude_me&~log_idx';
+        if(sum(neigh)>=minNeighbours)
             newIndx = find(neigh);
             indx_duplicate = [indx_duplicate setdiff(newIndx,indx_duplicate)];
             indx = [indx newIndx ];
@@ -55,7 +55,7 @@ for p = 1:size(S,1)
         end
         i = i+1;
     end
-    size(indx)
+    
     C{end+1} = S(indx_duplicate,:);
 end
 
