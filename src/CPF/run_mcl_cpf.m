@@ -49,6 +49,20 @@ while 1
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
             end
         case 'mcl_cpf_extra'
+            if t==1
+                C{1} = initial_particle_set;
+            end
+            C = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot);
+            if t==clustering_options.first_timestep
+                S = [];
+                for i=1:length(C)
+                    S = [S; C{i}];
+                end
+                C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
+                C = generate_new_cluster(C,'focused',map,1000); 
+            end
+            
+    
     end
     
     
@@ -70,6 +84,13 @@ while 1
             plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
             drawnow
         case 'mcl_cpf_extra'
+            clf(canvas);
+            plot_map(map);
+            hold on
+            plot_clusters(C);
+            hold off
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            drawnow
     end
       
 if t>=size(z,1) 
