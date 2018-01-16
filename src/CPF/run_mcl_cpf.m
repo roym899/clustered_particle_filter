@@ -42,10 +42,7 @@ while 1
             end
             C = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot);
             if t==clustering_options.first_timestep
-                S = [];
-                for i=1:length(C)
-                    S = [S; C{i}];
-                end
+                S = merge_clusters(C);
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
             end
         case 'mcl_cpf_extra'
@@ -58,9 +55,9 @@ while 1
                 adapt = 0;
             end
             if mod(t, 20) == 0
-                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true);
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
             else
-                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false);
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
             end
             if t==clustering_options.first_timestep
                 S = [];
@@ -95,7 +92,7 @@ while 1
             clf(canvas);
             plot_map(map);
             hold on
-            plot_clusters(C);
+            plot_clusters(C, true);
             hold off
             plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
             drawnow

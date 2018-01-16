@@ -1,6 +1,6 @@
 clear all
 
-load('room_dataset.mat');
+load('room_dataset_alt.mat');
 
 initial_particle_set = generate_uniform_particle_set(room_data.map, 10000);
 
