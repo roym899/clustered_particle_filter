@@ -29,8 +29,7 @@ hold on
 plot(S(:,1), S(:,2), '.','MarkerSize',3,'Color','blue');
 hold off
 drawnow
-    
-flag = 1;
+
 while 1 
     t = t+1;
     switch mode
@@ -42,11 +41,29 @@ while 1
             end
             C = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot);
             if t==clustering_options.first_timestep
+                S = merge_clusters(C);
+                C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
+            end
+            
+        case 'mcl_cpf_adaptive_likelihood'
+            % start with the inital number of particles
+            if t==1
+                C{1} = initial_particle_set;
+                W = {};
+                adapt = 0;
+            end
+            if mod(t, 20) == 0
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
+            else
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
+            end
+            if t==clustering_options.first_timestep
                 S = [];
                 for i=1:length(C)
                     S = [S; C{i}];
                 end
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
+                adapt = clustering_options.likelihood_threshold;
             end
         case 'mcl_cpf_extra'
             if t==1
@@ -88,6 +105,14 @@ while 1
             plot_map(map);
             hold on
             plot_clusters(C);
+            hold off
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            drawnow
+        case 'mcl_cpf_adaptive_likelihood'
+            clf(canvas);
+            plot_map(map);
+            hold on
+            plot_clusters(C, true);
             hold off
             plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
             drawnow

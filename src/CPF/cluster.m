@@ -15,8 +15,8 @@ C = {};
 points = zeros(size(S,1),1);
 d_euclidean = pdist2((S(:,[1,2])),S(:,[1,2]));
 angles = S(:,3);
-d_angle = repmat(angles, 1, size(S,1))-transpose(repmat(angles, 1, size(S,1)));
-d_angle = mod(d_angle,pi);
+d_angle = abs(repmat(angles, 1, size(S,1))-transpose(repmat(angles, 1, size(S,1))));
+d_angle = abs(mod(d_angle+pi/2, 2*pi) - pi/2);
 for p = 1:size(S,1)
     if ((points(p))) 
         continue;

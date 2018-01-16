@@ -7,7 +7,7 @@
 %           robot               struct
 % Outputs: 
 %           W:                  MX1
-function W = weight(S_bar,Q,z,map,robot)
+function [W unscaled_w] = weight(S_bar,Q,z,map,robot)
 % n = size(z, 1);
 % M = size(S_bar, 1);
 % nu = zeros(2, M);
@@ -23,4 +23,5 @@ function W = weight(S_bar,Q,z,map,robot)
 nu = observation_model(robot, map, S_bar)-z;
 likelihood = prod(normpdf(nu,0,Q),2);
 W = likelihood./sum(likelihood);
+unscaled_w = likelihood;
 end 
