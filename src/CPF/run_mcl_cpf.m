@@ -76,7 +76,7 @@ while 1
                     S = [S; C{i}];
                 end
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
-                C = generate_new_cluster(C,'focused',map,1000); 
+                extra_cluster = generate_new_cluster(C,'focused',map,1000,17); 
             end
             
     
