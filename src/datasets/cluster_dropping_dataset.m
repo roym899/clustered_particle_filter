@@ -1,4 +1,4 @@
-%% generates simple 10mx10m room dataset
+ %% generates simple 10mx10m room dataset
 map = init_map([0 16 0 12]);
 map = add_wall(map, [1 1 15 1]);
 map = add_wall(map, [15 1 15 3]);

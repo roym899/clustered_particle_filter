@@ -30,6 +30,8 @@ plot(S(:,1), S(:,2), '.','MarkerSize',3,'Color','blue');
 hold off
 drawnow
 
+next_clustering_timestep = clustering_options.first_timestep;
+
 while 1 
     t = t+1;
     switch mode
@@ -52,18 +54,23 @@ while 1
                 W = {};
                 adapt = 0;
             end
-            if mod(t, 20) == 0
-                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
-            else
-                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
-            end
-            if t==clustering_options.first_timestep
+            if t == next_clustering_timestep
                 S = [];
                 for i=1:length(C)
                     S = [S; C{i}];
                 end
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
                 adapt = clustering_options.likelihood_threshold;
+            end
+            if mod(t, 20) == 0 || t == clustering_options.first_timestep
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
+            else
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
+            end
+            
+            if length(C) == 0% no cluster left => kidnapping or no correct hypothesis => restart
+                C{1} = initial_particle_set;
+                next_clustering_timestep = t + clustering_options.first_timestep;
             end
         case 'mcl_cpf_extra'
             if t==1
