@@ -20,7 +20,9 @@ robot = init_robot(0.1, sensors, 2, sensor_variance, control_variance);
 
 state = [2, 2, 0];
 
-control = repmat([0.4 0], 200,1);
+control = repmat([0.4 0], 180,1);
+control = [control; repmat([0.2 0.31], 50,1); ];
+control = [control; repmat([0.4 0.01], 100,1); ];
 
 canvas = figure;
 room_data.control = add_control_noise(robot, control);
@@ -44,5 +46,5 @@ end
 
 
 
-save('room_dataset_alt','room_data');
+save('room_alt','room_data');
 

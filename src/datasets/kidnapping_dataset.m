@@ -31,11 +31,11 @@ state = [2, 4, 0];
 
 control = repmat([0.4 0.25], 50,1);
 control = [control; repmat([0.4 0.1], 50,1)];
-control = [control; repmat([0.2 0.2], 50,1)];
-control = [control; repmat([0.2 -0.3], 50,1)];
+control = [control; repmat([0.2 0.1], 50,1)];
+control = [control; repmat([0.2 -0.1], 50,1)];
 control = [control; repmat([0.3 0.1], 50,1)];
 
-canvas = figure;
+canvas = figure('Position', [100 100 1500 800]);
 room_data.control = add_control_noise(robot, control);
 room_data.measurements = zeros(size(control,1), sensors);
 room_data.actual_state = zeros(size(control,1), size(state,2));
@@ -45,21 +45,20 @@ room_data.robot = robot;
 for i=1:size(control,1)
     tic;
     clf(canvas);
-    plot_map(map);
-    plot_robot(robot, state, measurement, true);
-    if i == 100 
-        state = [ 11 2 pi/4 ];
+    if i == 110 
+        state = [ 8.5 2.8 -pi/10 ];
     else
         state = motion_model(robot, state, control(i,:), [0, 0; 0, 0]); % move robot perfectly
     end
     measurement = add_observation_noise(robot, observation_model(robot, map, state));    
     room_data.actual_state(i,:) = state;
     room_data.measurements(i,:) = measurement;
+    plot_map(map);
+    plot_robot(robot, state, measurement, true);
     t = toc;
     drawnow
+    f(i) = getframe;
 end
-
-
 
 save('kidnapping','room_data');
 

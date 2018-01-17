@@ -8,7 +8,7 @@ initial_particle_set = generate_uniform_particle_set(room_data.map, 10000);
 % figure
 % run_mcl_cpf(room_data.map, room_data.robot, room_data, 'mcl', initial_particle_set, [0.5, 0; 0 1], 0.5);
 % toc
-% 
+
 % tic
 % figure
 % clustering_options.first_timestep = 10;

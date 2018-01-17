@@ -42,5 +42,5 @@ for i=1:size(control,1)
     pause(0.001)
 end
 
-save('room_dataset','room_data');
+save('room','room_data');
 

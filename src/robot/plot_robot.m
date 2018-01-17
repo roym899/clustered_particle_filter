@@ -1,4 +1,4 @@
-function [ ] = plot_robot( robot, state, measurement, sensor_lines )
+function [ ] = plot_robot( robot, state, measurement, sensor_lines, siz, col )
 %plot_robot Plots the robot with different verbosities
 %   robot the robot to be plotted
 %   state the current state of the robot
@@ -7,11 +7,19 @@ function [ ] = plot_robot( robot, state, measurement, sensor_lines )
 
 % check number of arguments
 if nargin < 3
+    col = [1,0,0];
     measurement = [];
     draw_sensors = false;
 elseif nargin < 4
     sensor_lines = false;
     draw_sensors = false;
+elseif nargin < 5
+    siz = 20;
+    draw_sensors = true;
+    col = [1,0,0];
+elseif nargin < 6
+    col = [1,0,0];
+    draw_sensors = true;
 else
     draw_sensors = true;
 end
@@ -40,17 +48,21 @@ if draw_sensors
 end
 
 % draw the robot
-line([state(1) state(1)+0.25*cos(state(3))], [state(2) state(2)+0.25*sin(state(3))],'Color','red');
-plot(state(1), state(2), '.','MarkerSize',20,'Color','red');
+line([state(1) state(1)+0.25*cos(state(3))], [state(2) state(2)+0.25*sin(state(3))],'Color',col);
+plot(state(1), state(2), '.','MarkerSize',siz,'Color',col);
 
-[john, map, alpha] = imread('robot.png');
-AxesHandle=findobj(gcf,'Type','axes');
-curaxes = plotboxpos(AxesHandle);
-axes('position',[(state(1)-0.5)/diff(xlim)*curaxes(3)+curaxes(1), (state(2)-0.65)/diff(ylim)*curaxes(4)+curaxes(2), size(john,2)/max(size(john))*curaxes(3)/10,  size(john,1)/max(size(john))*curaxes(4)/10]);
-f = imshow('robot.png');
-set(f, 'AlphaData', alpha);
+% ax = gca;
+% 
+% [john, map, alpha] = imread('robot.png');
+% AxesHandle=findobj(gcf,'Type','axes');
+% curaxes = plotboxpos(AxesHandle);
+% axes('position',[(state(1)-0.5)/diff(xlim)*curaxes(3)+curaxes(1), (state(2)-0.65)/diff(ylim)*curaxes(4)+curaxes(2), size(john,2)/max(size(john))*curaxes(3)/10,  size(john,1)/max(size(john))*curaxes(4)/10]);
+% f = imshow('robot.png');
+% set(f, 'AlphaData', alpha);
 
 hold off
+
+% axes(ax)
 
 end
 

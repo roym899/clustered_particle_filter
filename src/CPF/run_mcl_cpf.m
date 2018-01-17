@@ -13,6 +13,10 @@
 
 
 function run_mcl_cpf(map, robot, data, mode, initial_particle_set, control_variance, measurement_variance, clustering_options)
+if nargin < 8
+    clustering_options.first_timestep = 10;
+end
+
 t = 0;
 
 z = data.measurements;
@@ -21,7 +25,7 @@ S = initial_particle_set;
 R = control_variance;
 Q = measurement_variance;
 
-canvas = figure;
+canvas = figure('Position', [100 100 1820, 880]);
 
 clf(canvas);
 plot_map(map);
@@ -136,17 +140,27 @@ while 1
             clf(canvas);
             plot_map(map);
             hold on
-            plot(S(:,1), S(:,2), '.','MarkerSize',3,'Color','blue');
+            plot(S(:,1), S(:,2), '.','MarkerSize',5,'Color','blue');
             hold off
-            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true, 20, [1 0 0]);
+            means = cluster_mean({S});
+            plot_robot(robot, means(1,:), 0, false, 20, [0.0 0.0 0.0]);
             drawnow
+%             f(t) = getframe
         case 'mcl_cpf'
             clf(canvas);
             plot_map(map);
             hold on
             plot_clusters(C);
             hold off
-            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true, 20, [1 0 0]);
+%             
+%             means = cluster_mean(C);
+%             for i=1:size(means,1)
+%                 plot_robot(robot, means(i,:), 0, false, 20, [0.0 0.0 0.0]);
+%             end
+%             f(t) = getframe
+            
             drawnow
         case 'mcl_cpf_extra'
             clf(canvas);
@@ -154,7 +168,7 @@ while 1
             hold on
             plot_clusters(C);
             hold off
-            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true, 20, [1 0 0]);
             drawnow
         case 'mcl_cpf_adaptive_likelihood'
             clf(canvas);
@@ -162,8 +176,10 @@ while 1
             hold on
             plot_clusters(C, true);
             hold off
-            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true, 20, [1 0 0]);
+            
             drawnow
+%             f(t) = getframe
         case 'mcl_cpf_adaptive_likelihood_extra'
             clf(canvas);
             plot_map(map);
@@ -173,8 +189,9 @@ while 1
                 plot_clusters(extra_cluster, true, true);
             end
             hold off
-            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
+            plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true, 20, [1 0 0]);
             drawnow
+%             f(t) = getframe
     end
       
 if t>=size(z,1) 
@@ -182,5 +199,6 @@ if t>=size(z,1)
 end
 end
 
+% make_video(f, 'merging_john.mj2', 30);
 
 end
