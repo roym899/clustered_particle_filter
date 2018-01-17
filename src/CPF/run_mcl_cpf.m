@@ -46,8 +46,32 @@ while 1
                 S = merge_clusters(C);
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
             end
-            
         case 'mcl_cpf_adaptive_likelihood'
+            % start with the inital number of particles
+            if t==1
+                C{1} = initial_particle_set;
+                W = {};
+                adapt = 0;
+            end
+            if t == next_clustering_timestep
+                S = [];
+                for i=1:length(C)
+                    S = [S; C{i}];
+                end
+                C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
+                adapt = clustering_options.likelihood_threshold;
+            end
+            if mod(t, 20) == 0 || t == clustering_options.first_timestep  
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
+            else
+                [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
+            end
+            
+            if length(C) == 0% no cluster left => kidnapping or no correct hypothesis => restart
+                C{1} = initial_particle_set;
+                next_clustering_timestep = t + clustering_options.first_timestep;
+            end
+        case 'mcl_cpf_adaptive_likelihood_extra'
             % start with the inital number of particles
             if t==1
                 C{1} = initial_particle_set;

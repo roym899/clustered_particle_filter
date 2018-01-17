@@ -55,7 +55,5 @@ for i=1:size(control,1)
     pause(0.001)
 end
 
-
-
 save('cluster_merging','room_data');
 
