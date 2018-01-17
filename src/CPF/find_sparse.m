@@ -9,7 +9,7 @@
 %           new_cluster         Extra set
 
 function new_cluster = find_sparse(C,map,sparsenessFactor,number)
-Stemp = []
+Stemp = [];
 xlength = map.limits(2) - map.limits(1);
 ylength = map.limits(4) - map.limits(3);
 zlength = 2*pi;

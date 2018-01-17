@@ -62,14 +62,25 @@ while 1
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
                 adapt = clustering_options.likelihood_threshold;
             end
-            if mod(t, 20) == 0 || t == clustering_options.first_timestep
+            if mod(t, 20) == 0 || t == clustering_options.first_timestep  
+                if exist('extra_cluster')
+                    C{end+1} = extra_cluster{1};
+                end
                 [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
+                if(length(C) >0)
+                    extra_cluster = {generate_new_cluster(C,'focused',map,1000,13)}; 
+                    extra_cluster = mcl_cluster(extra_cluster,R,Q,z(t,:),u(t,:),map,robot, adapt, {0}, clustering_options.max_cluster_particles, false, clustering_options);
+                end
             else
                 [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
+                if exist('extra_cluster')
+                    extra_cluster = mcl_cluster(extra_cluster,R,Q,z(t,:),u(t,:),map,robot, adapt, {0}, clustering_options.max_cluster_particles, false, clustering_options);
+                end
             end
             
             if length(C) == 0% no cluster left => kidnapping or no correct hypothesis => restart
                 C{1} = initial_particle_set;
+                clear('extra_cluster');
                 next_clustering_timestep = t + clustering_options.first_timestep;
             end
         case 'mcl_cpf_extra'
