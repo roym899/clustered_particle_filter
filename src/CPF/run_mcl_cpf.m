@@ -169,6 +169,9 @@ while 1
             plot_map(map);
             hold on
             plot_clusters(C, true);
+            if exist('extra_cluster')
+                plot_clusters(extra_cluster, true, true);
+            end
             hold off
             plot_robot(robot, data.actual_state(t,:), data.measurements(t,:), true);
             drawnow
