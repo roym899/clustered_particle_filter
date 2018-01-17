@@ -62,14 +62,20 @@ while 1
                 C = cluster(S, clustering_options.distance, clustering_options.angle_distance, 1);
                 adapt = clustering_options.likelihood_threshold;
             end
-            if mod(t, 20) == 0 || t == clustering_options.first_timestep  
+            if mod(t, 20) == 0 || t == next_clustering_timestep  
                 if exist('extra_cluster')
                     C{end+1} = extra_cluster{1};
                 end
                 [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, true, clustering_options);
+                if(t == next_clustering_timestep)
+                    C_original = C;
+                end
                 if(length(C) >0)
-                    extra_cluster = {generate_new_cluster(C,'focused',map,1000,13)}; 
-                    extra_cluster = mcl_cluster(extra_cluster,R,Q,z(t,:),u(t,:),map,robot, adapt, {0}, clustering_options.max_cluster_particles, false, clustering_options);
+                    extra_cluster = generate_new_cluster(C_original,'focused',map,1000,13);
+                    for b = 1:t-1
+                        extra_cluster = mcl(extra_cluster,R,Q,z(b,:),u(b,:),map,robot);
+                    end
+                    extra_cluster = mcl_cluster({extra_cluster},R,Q,z(t,:),u(t,:),map,robot, adapt, {0}, clustering_options.max_cluster_particles, false, clustering_options);
                 end
             else
                 [C, W] = mcl_cluster(C,R,Q,z(t,:),u(t,:),map,robot, adapt, W, clustering_options.max_cluster_particles, false, clustering_options);
