@@ -193,7 +193,7 @@ while 1
             drawnow
 %             f(t) = getframe
     end
-      
+   
 if t>=size(z,1) 
     break;
 end
